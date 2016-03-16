@@ -11,6 +11,12 @@ io.on('connection', function(socket){
   socket.on('initialize', function(msg) {
     console.log(msg);
   });
+  socket.on('x', function(x) {
+    console.log("x=" + x);
+  });
+  socket.on('y', function(y) {
+    console.log("y=" + y);
+  });
 });
 
 http.listen(3000, function(){
