@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <head>
+    <title>its on bitch</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+    </style>
+  </head>
+  <body>
+    <h1>Hello World</h1>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      var socket = io();
+      socket.emit('initialize', 'hello world');
+    </script>
+  </body>
+</html>
