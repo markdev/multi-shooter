@@ -1,19 +1,57 @@
 <!doctype html>
 <html>
   <head>
-    <title>its on bitch</title>
+    <title>Spacefish Multiplayer</title>
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
+      * { margin: 0; padding: 0; box-sizing: border-box; color: #fff;}
+      body { font: 13px Helvetica, Arial; background-color: #000;}
+      h1 {text-align: center; font-size: 4em; padding: 20px 0px;}
+      div#signupScreen {text-align: center;}
+      input#playerName {margin: auto; text-align: center; width: 80%; height: 10%; font-size: 6em; color: #800; margin: 40px 0px;}
+      button#playerNameSubmit { width: 60%; font-size: 4em;}
+      .gameScreen {display: none;}
     </style>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
   </head>
   <body>
-    <h1>Hello World</h1>
+
+    <div class="gameScreen" id="signupScreen">
+      <h1>Welcome to Spacefish!</h1>
+      <h1>Enter your name:</h1>
+      <input id="playerName" />
+      <br/>
+      <button id="playerNameSubmit">Enter</button>
+      <br/>
+      <span id="currentPlayers"></span>
+    </div>
+
+    <div class="gameScreen" id="calibrationScreen">
+    </div>
+
+    <div class="gameScreen" id="gameplayScreen">
+    </div>
+
+    <div class="gameScreen" id="resultsScreen">
+    </div>
+
     <script>
       var socket = io();
       socket.emit('initialize', 'hello world');
+
+      $('#signupScreen').css('display', 'block')
+
+      socket.on('playerList', function(players) {
+        var playerString = "Currently Playing: ";
+        if (Object.keys(players).length == 0) {
+          playerString += "no one yet";
+        } else {
+          playerString += Object.keys(players).join(", ");
+        }
+        $('#currentPlayers').html(playerString);
+      });
+
+
 
       function handleOrientation(event) {
         var x = event.beta;  // In degree in the range [-180,180]
@@ -26,7 +64,7 @@
         socket.emit('y', y);
       }
 
-      window.addEventListener('deviceorientation', handleOrientation);
+      //window.addEventListener('deviceorientation', handleOrientation);
     </script>
   </body>
 </html>
