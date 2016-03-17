@@ -19,6 +19,7 @@
     <div class="gameScreen" id="signupScreen">
       <h1>Welcome to Spacefish!</h1>
       <h1>Enter your name:</h1>
+      <h2 class="errorMessage"></h2>
       <input id="playerName" />
       <br/>
       <button id="playerNameSubmit">Enter</button>
@@ -27,6 +28,7 @@
     </div>
 
     <div class="gameScreen" id="calibrationScreen">
+      <h1>Calibration Screen</h1>
     </div>
 
     <div class="gameScreen" id="gameplayScreen">
@@ -43,15 +45,35 @@
 
       socket.on('playerList', function(players) {
         var playerString = "Currently Playing: ";
-        if (Object.keys(players).length == 0) {
+        if (players.length == 0) {
           playerString += "no one yet";
         } else {
-          playerString += Object.keys(players).join(", ");
+          playerString += players.join(", ");
         }
         $('#currentPlayers').html(playerString);
       });
 
+      socket.on('signup error', function(message) { 
+        gameError(message);
+      });
 
+      function gameError(message) {
+        $('.errorMessage').html(message);
+      }
+
+      socket.on('signup successful', function(nickname) {
+        $('#signupScreen').css('display', 'none');
+        $('#calibrationScreen').css('display', 'block');
+      });
+
+      $('#playerNameSubmit').click(function() {
+        var username = $('#playerName').val().trim();
+        if (username == "") {
+          gameError("Please enter a user name");
+        } else {
+          socket.emit('signup', username);
+        }
+      });
 
       function handleOrientation(event) {
         var x = event.beta;  // In degree in the range [-180,180]
