@@ -70,6 +70,12 @@
         calibrate();
       });
 
+      socket.on('player created', function(data) {
+        console.log(data);
+        $('#calibrationScreen').css('display', 'none');
+        $('#gameplayScreen').css('display', 'block');
+      });
+
       $('#playerNameSubmit').click(function() {
         var username = $('#playerName').val().trim();
         if (username == "") {
@@ -103,14 +109,7 @@
           clearInterval(countdown);
           var avgX = (xs.reduce(function(a,b){return a+b;}) / xs.length);
           var avgY = (ys.reduce(function(a,b){return a+b;}) / ys.length);
-          /*
-          console.log(avgX);
-          console.log(avgY);
-          socket.emit('x', avgX);
-          socket.emit('y', avgY);
-          */
-          $('#calibrationScreen').css('display', 'none');
-          $('#gameplayScreen').css('display', 'block');
+          socket.emit('start game');
         }, 5000);
       }
 

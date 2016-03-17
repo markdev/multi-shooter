@@ -1,7 +1,11 @@
+"use strict"
+
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var players = {'a':{}};
+
+const world = { height: 1000, width: 1000 };
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -27,9 +31,23 @@ io.on('connection', function(socket) {
     }
   });
 
+  socket.on('start game', function() {
+    let data = {
+      name   : socket.nickname,
+      posX   : Math.round(Math.random() * world.width),
+      posY   : Math.round(Math.random() * world.height),
+      dir    : Math.round(Math.random() * 360),
+      health : 100,
+      mode   : 'normal'
+    };
+    players[socket.nickname].data = data;
+    io.to(socket.id).emit('player created', data);
+  });
+
   socket.on('x', function(x) {
     console.log("x=" + x);
   });
+
   socket.on('y', function(y) {
     console.log("y=" + y);
   });
