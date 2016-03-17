@@ -10,16 +10,17 @@ app.get('/', function(req, res){
 io.on('connection', function(socket) {
   socket.on('initialize', function(msg) {
     console.log(msg);
-    updatePlayers;
+    updatePlayers();
   });
 
   socket.on('signup', function(username) {
     if (Object.keys(players).indexOf(username) == -1) {
       // player does not exist, create the player
       socket.nickname = username; 
-      players[socket.nickname] = socket;
+      players[socket.nickname] = {'socket': socket};
       io.to(socket.id).emit('signup successful', socket.nickname);
       updatePlayers();
+      console.log(Object.keys(players));
     } else {
       // player exists, send error
       io.to(socket.id).emit('signup error', '"' + username + '" is already taken.');
@@ -31,6 +32,12 @@ io.on('connection', function(socket) {
   });
   socket.on('y', function(y) {
     console.log("y=" + y);
+  });
+
+  socket.on('disconnect', function(data){
+    if (!socket.nickname) return;
+    delete players[socket.nickname];
+    updatePlayers();
   });
 
   function updatePlayers() {
