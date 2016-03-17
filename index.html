@@ -34,6 +34,7 @@
     </div>
 
     <div class="gameScreen" id="gameplayScreen">
+      <h1>Game on</h1>
     </div>
 
     <div class="gameScreen" id="resultsScreen">
@@ -102,10 +103,14 @@
           clearInterval(countdown);
           var avgX = (xs.reduce(function(a,b){return a+b;}) / xs.length);
           var avgY = (ys.reduce(function(a,b){return a+b;}) / ys.length);
+          /*
           console.log(avgX);
           console.log(avgY);
           socket.emit('x', avgX);
           socket.emit('y', avgY);
+          */
+          $('#calibrationScreen').css('display', 'none');
+          $('#gameplayScreen').css('display', 'block');
         }, 5000);
       }
 
