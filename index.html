@@ -49,7 +49,12 @@
       $('#signupScreen').css('display', 'block')
 
       var canvas,     // Canvas DOM element
-          ctx         // Canvas rendering context
+          ctx,        // Canvas rendering context
+          localRefX,
+          localRefY,
+          velX = 0,
+          velY = 0,
+          testplayer
       ;
 
 
@@ -82,7 +87,6 @@
         $('#calibrationScreen').css('display', 'none');
         $('#gameplayScreen').css('display', 'block');
         gameInit();
-        animate();
       });
 
 
@@ -130,22 +134,12 @@
         setTimeout(function(){
           window.removeEventListener('deviceorientation', addCalibration);
           clearInterval(countdown);
-          var avgX = (xs.reduce(function(a,b){return a+b;}) / xs.length);
-          var avgY = (ys.reduce(function(a,b){return a+b;}) / ys.length);
+          localRefX = Math.round((xs.reduce(function(a,b){return a+b;}) / xs.length));
+          localRefY = Math.round((ys.reduce(function(a,b){return a+b;}) / ys.length));
           socket.emit('start game');
         }, 5000);
       }
 
-      function handleOrientation(event) {
-        var x = event.beta;  // In degree in the range [-180,180]
-        var y = event.gamma; // In degree in the range [-90,90]
-
-        console.log(x);
-        console.log(y);
-
-        socket.emit('x', x);
-        socket.emit('y', y);
-      }
 
       function gameInit() {
         // Good ol' requestAnimFrame
@@ -167,12 +161,42 @@
         // Maximise the canvas
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+
+        //just to test the canvas
+        testplayer = {x: 300, y: 300};
+        
+        // Start listening to events
+        window.addEventListener('deviceorientation', handleOrientation);
+      
+        // Go!
+        animate();
+      }
+
+      function handleOrientation(event) {
+        var x = event.gamma;  // In degree in the range [-180,180]
+        var y = event.beta; // In degree in the range [-90,90]
+        velX  = (Math.round(x - localRefX) !== undefined)? Math.round(x - localRefX) : 0;
+        velY  = (Math.round(x - localRefY) !== undefined)? Math.round(y - localRefY) : 0;
       }
 
       function animate() {
+        update();
+        draw();
+        window.requestAnimFrame(animate);
+      };
+
+      function update() {
+        console.log(testplayer.x);
+        console.log(testplayer.y);
+        testplayer.x = testplayer.x + velX;
+        testplayer.y = testplayer.y + velY;
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         // just testing
         ctx.fillStyle = "red";
-        ctx.fillRect(0, 0, 100, 100);
+        ctx.fillRect(testplayer.x, testplayer.y, 100, 100);
       }
 
       //window.addEventListener('deviceorientation', handleOrientation);
