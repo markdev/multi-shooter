@@ -29,7 +29,7 @@
 
     <div class="gameScreen" id="calibrationScreen">
       <h1>Calibrating Your Device</h1>
-      <h1>5</h1>
+      <h1 id="calibrationCount">5</h1>
       <h1>Hold Still!</h1>
     </div>
 
@@ -66,6 +66,7 @@
       socket.on('signup successful', function(nickname) {
         $('#signupScreen').css('display', 'none');
         $('#calibrationScreen').css('display', 'block');
+        calibrate();
       });
 
       $('#playerNameSubmit').click(function() {
@@ -76,6 +77,37 @@
           socket.emit('signup', username);
         }
       });
+
+      function calibrate() {
+        // wait three seconds, then tally two seconds of holding
+        var count = 4;
+        var xs = [];
+        var ys = [];
+
+        function addCalibration(event) {
+          xs.push(event.beta);
+          ys.push(event.gamma);         
+        }
+        function tick() {
+          $('#calibrationCount').html(count);
+          count--;          
+        }
+        var countdown = setInterval(tick, 1000);
+        setTimeout(function(){
+          console.log("now calibrating");
+          window.addEventListener('deviceorientation', addCalibration);
+        }, 3000);
+        setTimeout(function(){
+          window.removeEventListener('deviceorientation', addCalibration);
+          clearInterval(countdown);
+          var avgX = (xs.reduce(function(a,b){return a+b;}) / xs.length);
+          var avgY = (ys.reduce(function(a,b){return a+b;}) / ys.length);
+          console.log(avgX);
+          console.log(avgY);
+          socket.emit('x', avgX);
+          socket.emit('y', avgY);
+        }, 5000);
+      }
 
       function handleOrientation(event) {
         var x = event.beta;  // In degree in the range [-180,180]
