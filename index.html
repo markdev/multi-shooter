@@ -34,20 +34,29 @@
     </div>
 
     <div class="gameScreen" id="gameplayScreen">
-      <h1>Game on</h1>
+      <canvas id="gameCanvas"></canvas>
     </div>
 
     <div class="gameScreen" id="resultsScreen">
     </div>
 
     <script>
+      /********************* 
+        Game Initialization
+      *********************/
       var socket = io();
       socket.emit('initialize', 'hello world');
       $('#signupScreen').css('display', 'block')
 
-      /*************** 
-        Socket Events 
-      ***************/
+      var canvas,     // Canvas DOM element
+          ctx         // Canvas rendering context
+      ;
+
+
+
+      /********************* 
+          Socket Events 
+      *********************/
       socket.on('playerList', function(players) {
         var playerString = "Currently Playing: ";
         if (players.length == 0) {
@@ -72,11 +81,15 @@
         console.log(data);
         $('#calibrationScreen').css('display', 'none');
         $('#gameplayScreen').css('display', 'block');
+        gameInit();
+        animate();
       });
 
-      /*************** 
-        jQuery Events 
-      ***************/
+
+
+      /********************* 
+          jQuery Events 
+      *********************/
       $('#playerNameSubmit').click(function() {
         var username = $('#playerName').val().trim();
         if (username == "") {
@@ -86,9 +99,11 @@
         }
       });
 
-      /*************** 
-          Functions 
-      ***************/
+
+
+      /********************* 
+            Functions 
+      *********************/
       function gameError(message) {
         $('.errorMessage').html(message);
       }
@@ -130,6 +145,34 @@
 
         socket.emit('x', x);
         socket.emit('y', y);
+      }
+
+      function gameInit() {
+        // Good ol' requestAnimFrame
+        window.requestAnimFrame = (function(){
+          return  window.requestAnimationFrame  || 
+          window.webkitRequestAnimationFrame    || 
+          window.mozRequestAnimationFrame       || 
+          window.oRequestAnimationFrame         || 
+          window.msRequestAnimationFrame        || 
+          function(/* function */ callback, /* DOMElement */ element){
+            window.setTimeout(callback, 1000 / 60);
+          };
+        })();
+
+        // Declare the canvas and rendering context
+        canvas = document.getElementById("gameCanvas");
+        ctx = canvas.getContext("2d");
+
+        // Maximise the canvas
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      function animate() {
+        // just testing
+        ctx.fillStyle = "red";
+        ctx.fillRect(0, 0, 100, 100);
       }
 
       //window.addEventListener('deviceorientation', handleOrientation);
