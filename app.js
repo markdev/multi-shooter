@@ -12,8 +12,18 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', function(socket) {
+
+  /*************** 
+    Socket Events 
+  ***************/
   socket.on('initialize', function(msg) {
     console.log(msg);
+    updatePlayers();
+  });
+
+  socket.on('disconnect', function(data){
+    if (!socket.nickname) return;
+    delete players[socket.nickname];
     updatePlayers();
   });
 
@@ -42,20 +52,6 @@ io.on('connection', function(socket) {
     };
     players[socket.nickname].data = data;
     io.to(socket.id).emit('player created', data);
-  });
-
-  socket.on('x', function(x) {
-    console.log("x=" + x);
-  });
-
-  socket.on('y', function(y) {
-    console.log("y=" + y);
-  });
-
-  socket.on('disconnect', function(data){
-    if (!socket.nickname) return;
-    delete players[socket.nickname];
-    updatePlayers();
   });
 
   function updatePlayers() {

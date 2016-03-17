@@ -43,9 +43,11 @@
     <script>
       var socket = io();
       socket.emit('initialize', 'hello world');
-
       $('#signupScreen').css('display', 'block')
 
+      /*************** 
+        Socket Events 
+      ***************/
       socket.on('playerList', function(players) {
         var playerString = "Currently Playing: ";
         if (players.length == 0) {
@@ -60,10 +62,6 @@
         gameError(message);
       });
 
-      function gameError(message) {
-        $('.errorMessage').html(message);
-      }
-
       socket.on('signup successful', function(nickname) {
         $('#signupScreen').css('display', 'none');
         $('#calibrationScreen').css('display', 'block');
@@ -76,6 +74,9 @@
         $('#gameplayScreen').css('display', 'block');
       });
 
+      /*************** 
+        jQuery Events 
+      ***************/
       $('#playerNameSubmit').click(function() {
         var username = $('#playerName').val().trim();
         if (username == "") {
@@ -84,6 +85,13 @@
           socket.emit('signup', username);
         }
       });
+
+      /*************** 
+          Functions 
+      ***************/
+      function gameError(message) {
+        $('.errorMessage').html(message);
+      }
 
       function calibrate() {
         // wait three seconds, then tally two seconds of holding
