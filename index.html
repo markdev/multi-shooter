@@ -211,7 +211,7 @@
         console.log(players);
         for (player in players) {
           console.log(players[player].data.posX);
-          ctx.fillStyle = "red";
+          ctx.fillStyle = players[player].data.color;
           ctx.fillRect(players[player].data.posX, players[player].data.posY, 100, 100);
         }
 

@@ -32,14 +32,13 @@ io.on('connection', function(socket) {
       socket.nickname = username; 
       let data = {
         name   : socket.nickname,
+        color  : getRandomColor(),
         posX   : 300, //Math.round(Math.random() * world.width),
         posY   : 300, //Math.round(Math.random() * world.height),
         dir    : Math.round(Math.random() * 360),
         health : 100,
         mode   : 'normal'
       };
-      console.log('data');
-      console.log(data);
       // player does not exist, create the player
       players[socket.nickname] = {'data':data};
       io.to(socket.id).emit('signup successful', socket.nickname);
@@ -52,15 +51,11 @@ io.on('connection', function(socket) {
   });
 
   socket.on('start game', function() {
-    console.log('start game');
-    console.log(players[socket.nickname].data);
     io.to(socket.id).emit('player created', players[socket.nickname].data);
   });
 
   // This takes regular client data
   socket.on('client update', function(playerData) {
-    console.log(playerData);
-    console.log(players);
     players[playerData.name].data = playerData;
   });
 
@@ -71,6 +66,12 @@ io.on('connection', function(socket) {
 
   function updatePlayers() {
     io.emit('playerList', Object.keys(players));
+  }
+
+  function getRandomColor() {
+    var colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'blue', 'coral', 'brown', 'aqua', 'cyan'];
+    var i = Math.floor(Math.random() * 10);
+    return colors[i];
   }
 
 });
