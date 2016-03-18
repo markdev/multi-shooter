@@ -3,7 +3,7 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var players = {'a':{}};
+var players = {};
 
 const world = { height: 1000, width: 1000 };
 
@@ -29,9 +29,19 @@ io.on('connection', function(socket) {
 
   socket.on('signup', function(username) {
     if (Object.keys(players).indexOf(username) == -1) {
-      // player does not exist, create the player
       socket.nickname = username; 
-      players[socket.nickname] = {'socket': socket};
+      let data = {
+        name   : socket.nickname,
+        posX   : 300, //Math.round(Math.random() * world.width),
+        posY   : 300, //Math.round(Math.random() * world.height),
+        dir    : Math.round(Math.random() * 360),
+        health : 100,
+        mode   : 'normal'
+      };
+      console.log('data');
+      console.log(data);
+      // player does not exist, create the player
+      players[socket.nickname] = {'data':data};
       io.to(socket.id).emit('signup successful', socket.nickname);
       updatePlayers();
       console.log(Object.keys(players));
@@ -42,17 +52,22 @@ io.on('connection', function(socket) {
   });
 
   socket.on('start game', function() {
-    let data = {
-      name   : socket.nickname,
-      posX   : Math.round(Math.random() * world.width),
-      posY   : Math.round(Math.random() * world.height),
-      dir    : Math.round(Math.random() * 360),
-      health : 100,
-      mode   : 'normal'
-    };
-    players[socket.nickname].data = data;
-    io.to(socket.id).emit('player created', data);
+    console.log('start game');
+    console.log(players[socket.nickname].data);
+    io.to(socket.id).emit('player created', players[socket.nickname].data);
   });
+
+  // This takes regular client data
+  socket.on('client update', function(playerData) {
+    console.log(playerData);
+    console.log(players);
+    players[playerData.name].data = playerData;
+  });
+
+  // This is the main pipe to everyone
+  var gameUpdates = setInterval(function() {
+    socket.emit('update players', players);
+  }, 100);
 
   function updatePlayers() {
     io.emit('playerList', Object.keys(players));
