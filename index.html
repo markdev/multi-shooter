@@ -54,9 +54,9 @@
           localRefY,
           velX = 0,
           velY = 0,
+
           playerData,
-          players,
-          testplayer
+          players
       ;
 
 
@@ -167,9 +167,6 @@
         // Maximise the canvas
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-
-        //just to test the canvas
-        testplayer = {x: 300, y: 300};
         
         // Start listening to events
         window.addEventListener('deviceorientation', moveScreen);
@@ -201,8 +198,7 @@
       };
 
       function update() {
-        //testplayer.x = testplayer.x + velX;
-        //testplayer.y = testplayer.y + velY;
+        //stuff
       }
 
       function draw() {
@@ -213,14 +209,18 @@
           console.log(players[player].data.posX);
           ctx.fillStyle = players[player].data.color;
           ctx.fillRect(players[player].data.posX, players[player].data.posY, 100, 100);
-        }
 
+          ctx.fillStyle = "white";
+          ctx.font = "20pt Arial";
+          ctx.fillText(players[player].data.posX, 100, 100);
+          ctx.fillText(players[player].data.posY, 100, 150);
+        }
+        /*
         ctx.fillStyle = "white";
         ctx.font = "20pt Arial";
-        ctx.fillText(testplayer.x, 100, 100);
-        ctx.fillText(testplayer.y, 100, 150);
         ctx.fillText(velX, 200, 100);
         ctx.fillText(velY, 200, 150);
+        */
       }
 
       //window.addEventListener('deviceorientation', handleOrientation);

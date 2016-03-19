@@ -3,7 +3,10 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var players = {};
+var players = {}; // I want to be able to use associativity
+var fish = [];
+var shots = [];
+var orbs = [];
 
 const world = { height: 1000, width: 1000 };
 
@@ -61,8 +64,28 @@ io.on('connection', function(socket) {
 
   // This is the main pipe to everyone
   var gameUpdates = setInterval(function() {
+    players = updatePositions(players);
     socket.emit('update players', players);
   }, 100);
+
+  function updatePositions(items) {
+    if (items) {
+      for (var item in items) {
+        var iData = items[item].data;
+        (iData.posX < 0)? iData.posX + world.width : iData.posX;
+        (iData.posY < 0)? iData.posY + world.height : iData.posY;
+        if (iData.posX > world.width) {
+          console.log(iData.posX);
+          iData.posX = 0;
+        } else {
+          console.log('nope');
+        }
+        (iData.posY > world.height)? 0 : iData.posY;
+      }
+    }
+    ///console.log(items);
+    return items;
+  };
 
   function updatePlayers() {
     io.emit('playerList', Object.keys(players));
