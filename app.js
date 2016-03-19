@@ -94,8 +94,13 @@ io.on('connection', function(socket) {
 
   function updateShots(shots) {
     for (var shot in shots) {
-      shots[shot].posX += shotspeed * Math.cos(shots[shot].theta);
-      shots[shot].posY += shotspeed * Math.sin(shots[shot].theta);
+      var s = shots[shot];
+      s.posX += shotspeed * Math.cos(s.theta);
+      s.posY += shotspeed * Math.sin(s.theta);
+      if (s.posX < 0) s.posX += world.width;
+      if (s.posY < 0) s.posY += world.height;
+      if (s.posX > world.width) s.posX -= world.width;
+      if (s.posY > world.height) s.posY -= world.height;      
     }
     return shots;
   }
