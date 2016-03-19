@@ -56,7 +56,8 @@
           velY = 0,
           nickname,   // user's nickname
           playerData, // user data (object)
-          players     // list of players, updated regularly from server
+          players,    // list of players, updated regularly from server
+          shots       // list of shots, updated regularly from server
       ;
 
       const world = { height: 1000, width: 1000 }; // UPDATE ON SERVER SIDE TOO
@@ -98,7 +99,12 @@
       socket.on('update players', function(serverPlayers) {
         if (Object.keys(serverPlayers).length > 0) {
           players = serverPlayers;
-          //playerData = serverPlayers[nickname].data;
+        }
+      });
+
+      socket.on('update shots', function(serverShots) {
+        if (Object.keys(serverShots).length > 0) {
+          shots = serverShots;
         }
       });
 
@@ -107,6 +113,8 @@
       /********************* 
           jQuery Events 
       *********************/
+
+      // Player Name Submit
       $('#playerNameSubmit').click(function() {
         var username = $('#playerName').val().trim();
         if (username == "") {
@@ -114,6 +122,24 @@
         } else {
           socket.emit('signup', username);
         }
+      });
+
+      // Fire
+      $('canvas').on('mousedown', function(e) {
+        var dx = e.pageX - playerData.posX; 
+        var dy = e.pageY - playerData.posY;
+        var theta = Math.atan2(dy, dx);
+        theta *= 180 / Math.PI;
+        theta = Math.round(theta);
+        let shot = {
+          firer:  nickname,
+          posX:   playerData.posX, 
+          posY:   playerData.posY,
+          theta:  theta,
+          color:  'white',
+          damage: 10 
+        };
+        socket.emit('shot fired', shot);
       });
 
 
@@ -234,7 +260,10 @@
         }
 
         // Draw the other objects
-        // -- code here
+        for (shot in shots) {
+          ctx.fillStyle = shots[shot].color;
+          ctx.fillRect(shots[shot].posX, shots[shot].posY, 20, 20);
+        }
 
         // Draw the game data
         // -- code here 

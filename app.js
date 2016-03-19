@@ -62,10 +62,17 @@ io.on('connection', function(socket) {
     players[playerData.name].data = playerData;
   });
 
+  // Adds shots to the array
+  socket.on('shot fired', function(shot) {
+    shots.push(shot);
+  });  
+
   // This is the main pipe to everyone
   var gameUpdates = setInterval(function() {
     players = updatePositions(players);
     socket.emit('update players', players);
+    shots = updateShots(shots);
+    socket.emit('update shots', shots);
   }, 100);
 
   function updatePositions(items) {
@@ -77,15 +84,20 @@ io.on('connection', function(socket) {
         if (iData.posX > world.width) {
           console.log(iData.posX);
           iData.posX = 0;
-        } else {
-          console.log('nope');
         }
         (iData.posY > world.height)? 0 : iData.posY;
       }
     }
-    ///console.log(items);
     return items;
   };
+
+  function updateShots(shots) {
+    for (var shot in shots) {
+      shots[shot].posX += 1;
+      shots[shot].posY += 1;
+    }
+    return shots;
+  }
 
   function updatePlayers() {
     io.emit('playerList', Object.keys(players));
