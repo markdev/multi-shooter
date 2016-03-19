@@ -131,68 +131,40 @@
       });
 
 
-      // Fire
-    if (isMobile) {
-      $(document).on('touchstart', 'canvas', function(e) {
-        var xPos = e.originalEvent.touches[0].pageX;
-        var yPos = e.originalEvent.touches[0].pageY;
-        var dx = xPos - playerData.posX; 
-        var dy = yPos - playerData.posY;
-        var theta = Math.atan2(dy, dx); // in radians
-        theta = Math.round(theta);
+        // Fire
+      if (isMobile) {
+        $(document).on('touchstart', 'canvas', function(e) {
+          var xPos = e.originalEvent.touches[0].pageX;
+          var yPos = e.originalEvent.touches[0].pageY;
+          fireShot(xPos, yPos);
+        });
+      } else { 
+        $('canvas').on('mousedown', function(e) {
+          fireShot(e.pageX, e.pageY);
+        });      
+      }
 
-        var shot = {
-          firer:  nickname,
-          posX:   playerData.posX, 
-          posY:   playerData.posY,
-          theta:  theta,
-          color:  'white',
-          damage: 10 
-        };
-        
-        socket.emit('shot fired', shot);
-      });
-    } else { 
-      $('canvas').on('mousedown', function(e) {
-        var dx = e.pageX - playerData.posX; 
-        var dy = e.pageY - playerData.posY;
-        var theta = Math.atan2(dy, dx); // in radians
-        theta = Math.round(theta);
-        var shot = {
-          firer:  nickname,
-          posX:   playerData.posX, 
-          posY:   playerData.posY,
-          theta:  theta,
-          color:  'white',
-          damage: 10 
-        };
-        socket.emit('shot fired', shot);
-      });      
-    }
-
-
-      /*
-      $('canvas').on('mousedown', function(e) {
-        var dx = e.pageX - playerData.posX; 
-        var dy = e.pageY - playerData.posY;
-        var theta = Math.atan2(dy, dx); // in radians
-        theta = Math.round(theta);
-        let shot = {
-          firer:  nickname,
-          posX:   playerData.posX, 
-          posY:   playerData.posY,
-          theta:  theta,
-          color:  'white',
-          damage: 10 
-        };
-        socket.emit('shot fired', shot);
-      });
-      */
 
 
       /********************* 
             Functions 
       *********************/
+      function fireShot(x, y) {
+        var dx = x - playerData.posX; 
+        var dy = y - playerData.posY;
+        var theta = Math.atan2(dy, dx); // in radians
+        theta = Math.round(theta);
+        var shot = {
+          firer:  nickname,
+          posX:   playerData.posX, 
+          posY:   playerData.posY,
+          theta:  theta,
+          color:  'white',
+          damage: 10 
+        };
+        socket.emit('shot fired', shot);
+      }
+      
       function gameError(message) {
         $('.errorMessage').html(message);
       }
