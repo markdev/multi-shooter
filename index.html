@@ -13,6 +13,7 @@
     </style>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
   </head>
   <body>
 
@@ -124,7 +125,31 @@
         }
       });
 
+
       // Fire
+      $(document).on('touchstart', 'canvas', function(e) {
+        var xPos = e.originalEvent.touches[0].pageX;
+        var yPos = e.originalEvent.touches[0].pageY;
+        var dx = xPos - playerData.posX; 
+        var dy = yPos - playerData.posY;
+        var theta = Math.atan2(dy, dx); // in radians
+        theta = Math.round(theta);
+
+        var shot = {
+          firer:  nickname,
+          posX:   playerData.posX, 
+          posY:   playerData.posY,
+          theta:  theta,
+          color:  'white',
+          damage: 10 
+        };
+        
+        socket.emit('shot fired', shot);
+        
+      });
+     
+
+      /*
       $('canvas').on('mousedown', function(e) {
         var dx = e.pageX - playerData.posX; 
         var dy = e.pageY - playerData.posY;
@@ -140,7 +165,7 @@
         };
         socket.emit('shot fired', shot);
       });
-
+      */
 
 
       /********************* 

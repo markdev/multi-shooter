@@ -63,6 +63,18 @@ io.on('connection', function(socket) {
     players[playerData.name].data = playerData;
   });
 
+
+
+/*
+  socket.on('mobile test', function(e) {
+    console.log('mobile test:');
+    console.log(e);
+  });
+  */
+
+
+
+
   // Adds shots to the array
   socket.on('shot fired', function(shot) {
     shots.push(shot);
