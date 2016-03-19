@@ -9,7 +9,7 @@ var shots = [];
 var orbs = [];
 
 const serverPushFrequency = 100;            // in milliseconds
-const world = { height: 1000, width: 1000 }; // UPDATE ON CLIENT SIDE TOO
+const world = { height: 10000, width: 10000 }; // UPDATE ON CLIENT SIDE TOO
 const shotspeed = 20;
 const shotduration = 20;
 

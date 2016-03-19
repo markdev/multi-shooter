@@ -16,6 +16,7 @@
     <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
   </head>
   <body>
+    <img id="spaceBackground" src="http://www.space.com/images/i/000/051/090/i02/earth-debris-large.jpg?1445902580?interpolation=lanczos-none&downsize=640:*" style="display: none;"/>
 
     <div class="gameScreen" id="signupScreen">
       <h1>Welcome to Spacefish!</h1>
@@ -66,7 +67,7 @@
           shots       // list of shots, updated regularly from server
       ;
 
-      const world = { height: 1000, width: 1000 }; // UPDATE ON SERVER SIDE TOO
+      const world = { height: 10000, width: 10000 }; // UPDATE ON SERVER SIDE TOO
 
 
 
@@ -262,10 +263,28 @@
         // clear the screen
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        // Render background
+        var img = document.getElementById('spaceBackground');
+        ctx.drawImage(img, (0 - playerData.posX - 1000), (0 - playerData.posY - 1000), world.width, world.height);
+        ctx.drawImage(img, (0 - playerData.posX),        (0 - playerData.posY - 1000), world.width, world.height);
+        ctx.drawImage(img, (0 - playerData.posX + 1000), (0 - playerData.posY - 1000), world.width, world.height);
+
+        ctx.drawImage(img, (0 - playerData.posX - 1000), (0 - playerData.posY), world.width, world.height);
+        ctx.drawImage(img, (0 - playerData.posX),        (0 - playerData.posY), world.width, world.height);
+        ctx.drawImage(img, (0 - playerData.posX + 1000), (0 - playerData.posY), world.width, world.height);
+
+        ctx.drawImage(img, (0 - playerData.posX - 1000), (0 - playerData.posY + 1000), world.width, world.height);
+        ctx.drawImage(img, (0 - playerData.posX),        (0 - playerData.posY + 1000), world.width, world.height);
+        ctx.drawImage(img, (0 - playerData.posX + 1000), (0 - playerData.posY + 1000), world.width, world.height);
+
         // Draw the client player
         ctx.fillStyle = playerData.color;
-        //ctx.fillRect(playerData.posX, playerData.posY, 100, 100);
         ctx.fillRect(canvas.width/2, canvas.height/2, 100, 100);
+        ctx.fillStyle = 'white';
+        ctx.font = "20pt Arial";
+        ctx.fillText(playerData.posX, (canvas.width/2 + 10), (canvas.height/2 + 10));
+        ctx.fillText(playerData.posY, (canvas.width/2 + 10), (canvas.height/2 + 40));
+
 
         // Draw the other players
         for (player in players) {
