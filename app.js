@@ -80,13 +80,10 @@ io.on('connection', function(socket) {
     if (items) {
       for (var item in items) {
         var iData = items[item].data;
-        (iData.posX < 0)? iData.posX + world.width : iData.posX;
-        (iData.posY < 0)? iData.posY + world.height : iData.posY;
-        if (iData.posX > world.width) {
-          console.log(iData.posX);
-          iData.posX = 0;
-        }
-        (iData.posY > world.height)? 0 : iData.posY;
+        if (iData.posX < 0) iData.posX += world.width;
+        if (iData.posY < 0) iData.posY += world.height;
+        if (iData.posX > world.width) iData.posX -= world.width;
+        if (iData.posX > world.height) iData.posX -= world.height;
       }
     }
     return items;
