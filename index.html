@@ -54,9 +54,9 @@
           localRefY,
           velX = 0,
           velY = 0,
-
-          playerData,
-          players
+          nickname,   // user's nickname
+          playerData, // user data (object)
+          players     // list of players, updated regularly from server
       ;
 
 
@@ -85,14 +85,19 @@
       });
 
       socket.on('player created', function(data) {
+        nickname = data.name;
         playerData = data;
         $('#calibrationScreen').css('display', 'none');
         $('#gameplayScreen').css('display', 'block');
         gameInit();
       });
 
-      socket.on('update players', function(playersList) {
-        players = playersList;
+      // incoming from server
+      socket.on('update players', function(serverPlayers) {
+        if (Object.keys(serverPlayers).length > 0) {
+          players = serverPlayers;
+          playerData = serverPlayers[nickname].data;
+        }
       });
 
 
@@ -128,15 +133,19 @@
           xs.push(event.beta);
           ys.push(event.gamma);         
         }
+
         function tick() {
           $('#calibrationCount').html(count);
           count--;          
         }
+
         var countdown = setInterval(tick, 1000);
+
         setTimeout(function(){
           console.log("now calibrating");
           window.addEventListener('deviceorientation', addCalibration);
         }, 3000);
+
         setTimeout(function(){
           window.removeEventListener('deviceorientation', addCalibration);
           clearInterval(countdown);
@@ -204,9 +213,7 @@
       function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         // just testing
-        console.log(players);
         for (player in players) {
-          console.log(players[player].data.posX);
           ctx.fillStyle = players[player].data.color;
           ctx.fillRect(players[player].data.posX, players[player].data.posY, 100, 100);
 
