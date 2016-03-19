@@ -8,7 +8,7 @@ var fish = [];
 var shots = [];
 var orbs = [];
 
-const world = { height: 1000, width: 1000 };
+const world = { height: 1000, width: 1000 }; // UPDATE ON CLIENT SIDE TOO
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');

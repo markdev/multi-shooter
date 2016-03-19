@@ -59,6 +59,8 @@
           players     // list of players, updated regularly from server
       ;
 
+      const world = { height: 1000, width: 1000 }; // UPDATE ON SERVER SIDE TOO
+
 
 
       /********************* 
@@ -96,7 +98,7 @@
       socket.on('update players', function(serverPlayers) {
         if (Object.keys(serverPlayers).length > 0) {
           players = serverPlayers;
-          playerData = serverPlayers[nickname].data;
+          //playerData = serverPlayers[nickname].data;
         }
       });
 
@@ -198,6 +200,11 @@
         velY  = (y !== undefined)? Math.round(y - localRefY) : 0;
         playerData.posX = playerData.posX + velX;
         playerData.posY = playerData.posY + velY;
+        // edge wrapping
+        if (playerData.posX > world.width) playerData.posX = playerData.posX - world.width; 
+        if (playerData.posY > world.height) playerData.posY = playerData.posY - world.height; 
+        if (playerData.posX < 0) playerData.posX = playerData.posX + world.width; 
+        if (playerData.posY < 0) playerData.posY = playerData.posY + world.height; 
       }
 
       function animate() {
@@ -211,17 +218,27 @@
       }
 
       function draw() {
+        // clear the screen
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // just testing
-        for (player in players) {
-          ctx.fillStyle = players[player].data.color;
-          ctx.fillRect(players[player].data.posX, players[player].data.posY, 100, 100);
 
-          ctx.fillStyle = "white";
-          ctx.font = "20pt Arial";
-          ctx.fillText(players[player].data.posX, 100, 100);
-          ctx.fillText(players[player].data.posY, 100, 150);
+        // Draw the client player
+        ctx.fillStyle = playerData.color;
+        ctx.fillRect(playerData.posX, playerData.posY, 100, 100);
+
+        // Draw the other players
+        for (player in players) {
+          if (player != nickname) {
+            ctx.fillStyle = players[player].data.color;
+            ctx.fillRect(players[player].data.posX, players[player].data.posY, 100, 100);
+          }
         }
+
+        // Draw the other objects
+        // -- code here
+
+        // Draw the game data
+        // -- code here 
+
         /*
         ctx.fillStyle = "white";
         ctx.font = "20pt Arial";
