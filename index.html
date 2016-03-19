@@ -128,8 +128,7 @@
       $('canvas').on('mousedown', function(e) {
         var dx = e.pageX - playerData.posX; 
         var dy = e.pageY - playerData.posY;
-        var theta = Math.atan2(dy, dx);
-        theta *= 180 / Math.PI;
+        var theta = Math.atan2(dy, dx); // in radians
         theta = Math.round(theta);
         let shot = {
           firer:  nickname,

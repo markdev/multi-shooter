@@ -94,8 +94,8 @@ io.on('connection', function(socket) {
 
   function updateShots(shots) {
     for (var shot in shots) {
-      shots[shot].posX += shotspeed * Math.cos(shots[shot].theta * (Math.PI / 180.0));;
-      shots[shot].posY += shotspeed * Math.sin(shots[shot].theta * (Math.PI / 180.0));
+      shots[shot].posX += shotspeed * Math.cos(shots[shot].theta);
+      shots[shot].posY += shotspeed * Math.sin(shots[shot].theta);
     }
     return shots;
   }
