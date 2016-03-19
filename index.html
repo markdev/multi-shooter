@@ -109,9 +109,9 @@
       });
 
       socket.on('update shots', function(serverShots) {
-        if (Object.keys(serverShots).length > 0) {
+        //if (Object.keys(serverShots).length > 0) {
           shots = serverShots;
-        }
+        //}
       });
 
 
@@ -150,8 +150,10 @@
             Functions 
       *********************/
       function fireShot(x, y) {
-        var dx = x - playerData.posX; 
-        var dy = y - playerData.posY;
+        //var dx = x - playerData.posX; 
+        //var dy = y - playerData.posY;
+        var dx = x - canvas.width/2;
+        var dy = y - canvas.height/2;
         var theta = Math.atan2(dy, dx); // in radians
         theta = Math.round(theta);
         var shot = {
@@ -164,7 +166,7 @@
         };
         socket.emit('shot fired', shot);
       }
-      
+
       function gameError(message) {
         $('.errorMessage').html(message);
       }
@@ -214,21 +216,16 @@
             window.setTimeout(callback, 1000 / 60);
           };
         })();
-
         // Declare the canvas and rendering context
         canvas = document.getElementById("gameCanvas");
         ctx = canvas.getContext("2d");
-
         // Maximise the canvas
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        
         // Start listening to events
         window.addEventListener('deviceorientation', moveScreen);
-      
         // Start Playing
         animate();
-
         // Start sending regular updates
         var clientUpdate = setInterval(function() {
           socket.emit('client update', playerData);
@@ -267,31 +264,27 @@
 
         // Draw the client player
         ctx.fillStyle = playerData.color;
-        ctx.fillRect(playerData.posX, playerData.posY, 100, 100);
+        //ctx.fillRect(playerData.posX, playerData.posY, 100, 100);
+        ctx.fillRect(canvas.width/2, canvas.height/2, 100, 100);
 
         // Draw the other players
         for (player in players) {
           if (player != nickname) {
             ctx.fillStyle = players[player].data.color;
-            ctx.fillRect(players[player].data.posX, players[player].data.posY, 100, 100);
+            var playX = canvas.width/2 - (playerData.posX - players[player].data.posX);
+            var playY = canvas.width/2 - (playerData.posY - players[player].data.posY);
+            ctx.fillRect(playX, playY, 100, 100);
           }
         }
 
         // Draw the other objects
+        console.log(shots);
         for (shot in shots) {
           ctx.fillStyle = shots[shot].color;
-          ctx.fillRect(shots[shot].posX, shots[shot].posY, 20, 20);
+          var shotX = canvas.width/2 - (playerData.posX - shots[shot].posX);
+          var shotY = canvas.width/2 - (playerData.posY - shots[shot].posY);
+          ctx.fillRect(shotX, shotY, 20, 20);
         }
-
-        // Draw the game data
-        // -- code here 
-
-        /*
-        ctx.fillStyle = "white";
-        ctx.font = "20pt Arial";
-        ctx.fillText(velX, 200, 100);
-        ctx.fillText(velY, 200, 150);
-        */
       }
 
       //window.addEventListener('deviceorientation', handleOrientation);

@@ -8,8 +8,10 @@ var fish = [];
 var shots = [];
 var orbs = [];
 
+const serverPushFrequency = 100;            // in milliseconds
 const world = { height: 1000, width: 1000 }; // UPDATE ON CLIENT SIDE TOO
 const shotspeed = 20;
+const shotduration = 20;
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -77,6 +79,7 @@ io.on('connection', function(socket) {
 
   // Adds shots to the array
   socket.on('shot fired', function(shot) {
+    shot.duration = shotduration;
     shots.push(shot);
   });  
 
@@ -86,7 +89,7 @@ io.on('connection', function(socket) {
     socket.emit('update players', players);
     shots = updateShots(shots);
     socket.emit('update shots', shots);
-  }, 100);
+  }, serverPushFrequency);
 
   function updatePositions(items) {
     if (items) {
@@ -109,7 +112,9 @@ io.on('connection', function(socket) {
       if (s.posX < 0) s.posX += world.width;
       if (s.posY < 0) s.posY += world.height;
       if (s.posX > world.width) s.posX -= world.width;
-      if (s.posY > world.height) s.posY -= world.height;      
+      if (s.posY > world.height) s.posY -= world.height;
+      s.duration--;
+      if (s.duration <= 0) shots.splice(shot, 1);    
     }
     return shots;
   }
