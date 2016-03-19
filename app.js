@@ -9,6 +9,7 @@ var shots = [];
 var orbs = [];
 
 const world = { height: 1000, width: 1000 }; // UPDATE ON CLIENT SIDE TOO
+const shotspeed = 20;
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -93,8 +94,8 @@ io.on('connection', function(socket) {
 
   function updateShots(shots) {
     for (var shot in shots) {
-      shots[shot].posX += 1;
-      shots[shot].posY += 1;
+      shots[shot].posX += shotspeed * Math.cos(shots[shot].theta * (Math.PI / 180.0));;
+      shots[shot].posY += shotspeed * Math.sin(shots[shot].theta * (Math.PI / 180.0));
     }
     return shots;
   }
