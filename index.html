@@ -40,6 +40,7 @@
     </div>
 
     <div class="gameScreen" id="resultsScreen">
+      <h1>Game Over</h1>
     </div>
 
     <script>
@@ -120,7 +121,9 @@
       });
 
       socket.on('youre dead', function(foo) {
-        alert('NOOOOOOOOO!!!!!');
+        socket.disconnect();
+        $('#gameplayScreen').css('display', 'none');
+        $('#resultsScreen').css('display', 'block');
       });
 
 
@@ -292,7 +295,10 @@
         ctx.fillStyle = 'white';
         ctx.font = "20pt Arial";
         ctx.fillText(playerData.posX, (canvas.width/2 + 10), (canvas.height/2 + 10));
-        ctx.fillText(playerData.posY, (canvas.width/2 + 10), (canvas.height/2 + 40));
+        ctx.fillText(playerData.posY, (canvas.width/2 + 10), (canvas.height/2 + 30));
+        ctx.fillStyle = 'black';
+        ctx.font = "40pt Arial";
+        ctx.fillText(playerData.health, (canvas.width/2 + 40), (canvas.height/2 + 50));
 
 
         // Draw the other players
@@ -303,6 +309,9 @@
             var playX = canvas.width/2 - (playerData.posX - p.posX);
             var playY = canvas.width/2 - (playerData.posY - p.posY);
             ctx.fillRect(playX, playY, p.width, p.height);
+            ctx.fillStyle = 'black';
+            ctx.font = "40pt Arial";
+            ctx.fillText(p.health, playX + 30, playY + 30);
           }
         }
 

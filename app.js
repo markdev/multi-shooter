@@ -66,20 +66,10 @@ io.on('connection', function(socket) {
 
   // This takes regular client data
   socket.on('client update', function(playerData) {
-    players[playerData.name].data = playerData;
+    if (players[playerData.name]) {
+      players[playerData.name].data = playerData;
+    }
   });
-
-
-
-/*
-  socket.on('mobile test', function(e) {
-    console.log('mobile test:');
-    console.log(e);
-  });
-  */
-
-
-
 
   // Adds shots to the array
   socket.on('shot fired', function(shot) {
@@ -110,8 +100,8 @@ io.on('connection', function(socket) {
             console.log(p.name + " is down to " + p.health);
             io.to(p.id).emit('update health', p.health);
             if (p.health <= 0) {
-              // killPlayer(p);
-              console.log("killing " + p.id);
+              delete players[player];
+              //players = killPlayer(players, player);
               io.to(p.id).emit('youre dead', '');
             } else {
               // alertHitPlayer(p);
@@ -124,7 +114,11 @@ io.on('connection', function(socket) {
     }
     return {shots: shots, players: players};
   }
-
+/*
+  function killPlayer(players, player) {
+    delete players[player];
+  }
+*/
   function updatePositions(items) {
     if (items) {
       for (var item in items) {
