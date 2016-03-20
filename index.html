@@ -277,6 +277,7 @@
         ctx.drawImage(img, (0 - playerData.posX),        (0 - playerData.posY + 1000), world.width, world.height);
         ctx.drawImage(img, (0 - playerData.posX + 1000), (0 - playerData.posY + 1000), world.width, world.height);
 
+
         // Draw the client player
         ctx.fillStyle = playerData.color;
         ctx.fillRect(canvas.width/2, canvas.height/2, 100, 100);
@@ -304,6 +305,26 @@
           var shotY = canvas.width/2 - (playerData.posY - shots[shot].posY);
           ctx.fillRect(shotX, shotY, 20, 20);
         }
+
+        // Draw the map
+        var mapData = {height: 300, width: 300, color: 'white'};
+        var mapX = canvas.width - mapData.width - 10;
+        var mapY = 10;
+        ctx.fillStyle = mapData.color;
+        ctx.globalAlpha = 0.5;
+        ctx.fillRect(mapX, mapY, mapData.width, mapData.height);
+        // Draw the player
+        ctx.fillStyle = playerData.color;
+        ctx.globalAlpha = 1;
+        ctx.fillRect(mapX + ((playerData.posX/world.width) * mapData.width), mapY + ((playerData.posY/world.height) * mapData.height), 10, 10);
+        // Draw the other players
+        for (player in players) {
+          if (player != nickname) {
+            var p = players[player].data;
+            ctx.fillStyle = p.color;
+            ctx.fillRect(mapX + ((p.posX/world.width) * mapData.width), mapY + ((p.posY/world.height) * mapData.height), 10, 10);
+          }
+        }        
       }
 
       //window.addEventListener('deviceorientation', handleOrientation);
