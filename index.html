@@ -68,7 +68,7 @@
       ;
 
       const world = { height: 10000, width: 10000 }; // UPDATE ON SERVER SIDE TOO
-
+      const shotData = {size: 20}; // UPDATE ON THE SERVER SIDE TOO
 
 
       /********************* 
@@ -290,20 +290,20 @@
         // Draw the other players
         for (player in players) {
           if (player != nickname) {
-            ctx.fillStyle = players[player].data.color;
-            var playX = canvas.width/2 - (playerData.posX - players[player].data.posX);
-            var playY = canvas.width/2 - (playerData.posY - players[player].data.posY);
-            ctx.fillRect(playX, playY, 100, 100);
+            var p = players[player].data;
+            ctx.fillStyle = p.color;
+            var playX = canvas.width/2 - (playerData.posX - p.posX);
+            var playY = canvas.width/2 - (playerData.posY - p.posY);
+            ctx.fillRect(playX, playY, p.width, p.height);
           }
         }
 
         // Draw the other objects
-        console.log(shots);
         for (shot in shots) {
           ctx.fillStyle = shots[shot].color;
           var shotX = canvas.width/2 - (playerData.posX - shots[shot].posX);
           var shotY = canvas.width/2 - (playerData.posY - shots[shot].posY);
-          ctx.fillRect(shotX, shotY, 20, 20);
+          ctx.fillRect(shotX, shotY, shotData.size, shotData.size);
         }
 
         // Draw the map

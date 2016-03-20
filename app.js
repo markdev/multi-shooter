@@ -12,6 +12,7 @@ const serverPushFrequency = 100;            // in milliseconds
 const world = { height: 10000, width: 10000 }; // UPDATE ON CLIENT SIDE TOO
 const shotspeed = 20;
 const shotduration = 20;
+const shotData = {size: 20}; // UPDATE ON THE CLIENT SIDE TOO
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -43,7 +44,9 @@ io.on('connection', function(socket) {
         posY   : 300, //Math.round(Math.random() * world.height),
         dir    : Math.round(Math.random() * 360),
         health : 100,
-        mode   : 'normal'
+        mode   : 'normal',
+        width  : 100,
+        height : 100
       };
       // player does not exist, create the player
       players[socket.nickname] = {'data':data};
@@ -85,11 +88,31 @@ io.on('connection', function(socket) {
 
   // This is the main pipe to everyone
   var gameUpdates = setInterval(function() {
-    players = updatePositions(players);
-    socket.emit('update players', players);
     shots = updateShots(shots);
+    players = updatePositions(players);
+    var res = collisionDetection(shots, players);
+    shots = res.shots;
+    players = res.players;
     socket.emit('update shots', shots);
+    socket.emit('update players', players);
   }, serverPushFrequency);
+
+  function collisionDetection(shots, players) {
+    for (var shot in shots) {
+      var s = shots[shot];
+      for (var player in players) {
+        var p = players[player].data;
+        if (p.name != s.firer) {
+          if (s.posX + shotData.size > p.posX && s.posX < p.posX + p.width && s.posY + shotData.size > p.posY && s.posY < p.posY + p.height) {
+            p.health -= s.damage;
+            shots.splice(shot, 1);
+            console.log(p.name + " is down to " + p.health);
+          }
+        }
+      }
+    }
+    return {shots: shots, players: players};
+  }
 
   function updatePositions(items) {
     if (items) {
