@@ -38,6 +38,7 @@ io.on('connection', function(socket) {
     if (Object.keys(players).indexOf(username) == -1) {
       socket.nickname = username; 
       let data = {
+        id     : socket.id,
         name   : socket.nickname,
         color  : getRandomColor(),
         posX   : 300, //Math.round(Math.random() * world.width),
@@ -104,9 +105,19 @@ io.on('connection', function(socket) {
         var p = players[player].data;
         if (p.name != s.firer) {
           if (s.posX + shotData.size > p.posX && s.posX < p.posX + p.width && s.posY + shotData.size > p.posY && s.posY < p.posY + p.height) {
+            shots.splice(shot, 1); // takes the shot out of circulation
             p.health -= s.damage;
-            shots.splice(shot, 1);
             console.log(p.name + " is down to " + p.health);
+            io.to(p.id).emit('update health', p.health);
+            if (p.health <= 0) {
+              // killPlayer(p);
+              console.log("killing " + p.id);
+              io.to(p.id).emit('youre dead', '');
+            } else {
+              // alertHitPlayer(p);
+            }
+            
+            //console.log(p.name + " is down to " + p.health);
           }
         }
       }
