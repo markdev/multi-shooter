@@ -38,6 +38,7 @@ io.on('connection', function(socket) {
     if (Object.keys(players).indexOf(username) == -1) {
       socket.nickname = username; 
       let data = {
+        active : false,
         id     : socket.id,
         name   : socket.nickname,
         color  : getRandomColor(),
@@ -61,6 +62,7 @@ io.on('connection', function(socket) {
   });
 
   socket.on('start game', function() {
+    players[socket.nickname].data.active = true;
     io.to(socket.id).emit('player created', players[socket.nickname].data);
   });
 
@@ -93,7 +95,7 @@ io.on('connection', function(socket) {
       var s = shots[shot];
       for (var player in players) {
         var p = players[player].data;
-        if (p.name != s.firer) {
+        if (p.active && p.name != s.firer) {
           if (s.posX + shotData.size > p.posX && s.posX < p.posX + p.width && s.posY + shotData.size > p.posY && s.posY < p.posY + p.height) {
             shots.splice(shot, 1); // takes the shot out of circulation
             p.health -= s.damage;

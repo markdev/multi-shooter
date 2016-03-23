@@ -92,7 +92,7 @@
       socket.on('signup successful', function(nickname) {
         $('#signupScreen').css('display', 'none');
         $('#calibrationScreen').css('display', 'block');
-        calibrate();
+        calibrate(nickname);
       });
 
       socket.on('player created', function(data) {
@@ -183,7 +183,7 @@
         $('.errorMessage').html(message);
       }
 
-      function calibrate() {
+      function calibrate(nickname) {
         // wait three seconds, then tally two seconds of holding
         var count = 4;
         var xs = [];
@@ -211,7 +211,7 @@
           clearInterval(countdown);
           localRefX = Math.round((xs.reduce(function(a,b){return a+b;}) / xs.length));
           localRefY = Math.round((ys.reduce(function(a,b){return a+b;}) / ys.length));
-          socket.emit('start game');
+          socket.emit('start game', nickname);
         }, 5000);
       }
 
@@ -303,8 +303,10 @@
 
         // Draw the other players
         for (player in players) {
-          if (player != nickname) {
-            var p = players[player].data;
+          var p = players[player].data;
+          if (p.name != nickname && p.active) {
+         // if (player != nickname) {
+         // var p = players[player].data;
             ctx.fillStyle = p.color;
             var playX = canvas.width/2 - (playerData.posX - p.posX);
             var playY = canvas.width/2 - (playerData.posY - p.posY);
@@ -336,8 +338,10 @@
         ctx.fillRect(mapX + ((playerData.posX/world.width) * mapData.width), mapY + ((playerData.posY/world.height) * mapData.height), 10, 10);
         // Draw the other players
         for (player in players) {
-          if (player != nickname) {
-            var p = players[player].data;
+          var p = players[player].data;
+            if (p.name != nickname && p.active) {
+      //    if (player != nickname) {
+      //      var p = players[player].data;
             ctx.fillStyle = p.color;
             ctx.fillRect(mapX + ((p.posX/world.width) * mapData.width), mapY + ((p.posY/world.height) * mapData.height), 10, 10);
           }
