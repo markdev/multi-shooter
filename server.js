@@ -10,8 +10,8 @@ var orbs = [];
 
 const serverPushFrequency = 100;            // in milliseconds
 const world = { height: 5000, width: 5000 }; // UPDATE ON CLIENT SIDE TOO
-const shotspeed = 20;
-const shotduration = 200;
+const shotspeed = 15;
+const shotduration = 30;
 const shotData = {size: 20}; // UPDATE ON THE CLIENT SIDE TOO
 
 app.get('/', function(req, res){
