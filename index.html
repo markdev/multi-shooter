@@ -17,6 +17,7 @@
   </head>
   <body>
     <img id="spaceBackground" src="http://www.space.com/images/i/000/051/090/i02/earth-debris-large.jpg?1445902580?interpolation=lanczos-none&downsize=640:*" style="display: none;"/>
+    <img id="spaceship" src="https://33.media.tumblr.com/avatar_7e9d03d6ab0c_128.png" style="display: none;"/>
 
     <div class="gameScreen" id="signupScreen">
       <h1>Welcome to Spacefish!</h1>
@@ -285,8 +286,14 @@
 
 
         // Draw the client player
-        ctx.fillStyle = playerData.color;
-        ctx.fillRect(canvas.width/2, canvas.height/2, 100, 100);
+        var img = document.getElementById('spaceship');
+        //ctx.fillStyle = playerData.color;
+        ctx.drawImage(img, canvas.width/2, canvas.height/2 - 200, 100, 100);
+        //ctx.fillRect(canvas.width/2, canvas.height/2 - 200, 100, 100);
+        
+
+
+        /*
         ctx.fillStyle = 'white';
         ctx.font = "20pt Arial";
         ctx.fillText(playerData.posX, (canvas.width/2 + 10), (canvas.height/2 + 10));
@@ -294,6 +301,7 @@
         ctx.fillStyle = 'black';
         ctx.font = "40pt Arial";
         ctx.fillText(playerData.health, (canvas.width/2 + 40), (canvas.height/2 + 50));
+        */
 
 
         // Draw the other players
@@ -315,8 +323,19 @@
           ctx.fillStyle = shots[shot].color;
           var shotX = canvas.width/2 - (playerData.posX - shots[shot].posX);
           var shotY = canvas.width/2 - (playerData.posY - shots[shot].posY);
-          ctx.fillRect(shotX, shotY, shotData.size, shotData.size);
+          //ctx.fillRect(shotX, shotY, shotData.size, shotData.size);
+          ctx.beginPath();
+          ctx.arc(shotX, shotY, shotData.size, 0, 2 * Math.PI);
+          ctx.fill();
         }
+/*
+            game.bufferCanvasCtx.fillStyle = updateObject.color;
+            game.bufferCanvasCtx.beginPath();
+            game.bufferCanvasCtx.arc(updateObject.x, updateObject.y, updateObject.radius, 0, 2 * Math.PI);
+            game.bufferCanvasCtx.fill();
+*/
+
+
 
         // Draw the map
         var mapData = {

@@ -9,9 +9,9 @@ var shots = [];
 var orbs = [];
 
 const serverPushFrequency = 100;            // in milliseconds
-const world = { height: 10000, width: 10000 }; // UPDATE ON CLIENT SIDE TOO
+const world = { height: 5000, width: 5000 }; // UPDATE ON CLIENT SIDE TOO
 const shotspeed = 20;
-const shotduration = 20;
+const shotduration = 200;
 const shotData = {size: 20}; // UPDATE ON THE CLIENT SIDE TOO
 
 app.get('/', function(req, res){
@@ -82,6 +82,7 @@ io.on('connection', function(socket) {
   // This is the main pipe to everyone
   var gameUpdates = setInterval(function() {
     shots = updateShots(shots);
+console.log(shots);
     players = updatePositions(players);
     var res = collisionDetection(shots, players);
     shots = res.shots;
