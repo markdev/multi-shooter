@@ -326,12 +326,18 @@
         }
 
         // Draw the map
-        var mapData = {height: 300, width: 300, color: 'white'};
+        var mapData = {
+          height: 300, 
+          width: 300, 
+          color: 'white',
+          playerSize: 10
+        };
         var mapX = canvas.width - mapData.width - 10;
         var mapY = 10;
+        // Draw the map
         ctx.fillStyle = mapData.color;
         ctx.globalAlpha = 0.5;
-        ctx.fillRect(mapX, mapY, mapData.width, mapData.height);
+        ctx.fillRect(mapX, mapY, mapData.width + mapData.playerSize, mapData.height + mapData.playerSize); // playerSize acts as padding
         // Draw the player
         ctx.fillStyle = playerData.color;
         ctx.globalAlpha = 1;
@@ -340,10 +346,8 @@
         for (player in players) {
           var p = players[player].data;
             if (p.name != nickname && p.active) {
-      //    if (player != nickname) {
-      //      var p = players[player].data;
             ctx.fillStyle = p.color;
-            ctx.fillRect(mapX + ((p.posX/world.width) * mapData.width), mapY + ((p.posY/world.height) * mapData.height), 10, 10);
+            ctx.fillRect(mapX + ((p.posX/world.width) * mapData.width), mapY + ((p.posY/world.height) * mapData.height), mapData.playerSize, mapData.playerSize);
           }
         }        
       }
