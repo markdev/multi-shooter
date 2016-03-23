@@ -59,6 +59,8 @@
 
       var canvas,     // Canvas DOM element
           ctx,        // Canvas rendering context
+          bufferCanvas,
+          bctx,
           localRefX,
           localRefY,
           tiltX,
@@ -233,6 +235,11 @@
         // Maximise the canvas
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        // buffer canvas
+        bufferCanvas = document.createElement("canvas");
+        bctx = bufferCanvas.getContext("2d");
+        bufferCanvas.width = canvas.width;
+        bufferCanvas.height = canvas.height;
         // Start listening to events
         window.addEventListener('deviceorientation', moveScreen);
         // Start Playing
@@ -242,7 +249,6 @@
           socket.emit('client update', playerData);
         }, 100);
       }
-
 
 
       function moveScreen(event) {
@@ -268,39 +274,39 @@
 
       function draw() {
         // clear the screen
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        bctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Render background
         var img = document.getElementById('spaceBackground');
-        ctx.drawImage(img, (0 - playerData.posX - 1000), (0 - playerData.posY - 1000), world.width, world.height);
-        ctx.drawImage(img, (0 - playerData.posX),        (0 - playerData.posY - 1000), world.width, world.height);
-        ctx.drawImage(img, (0 - playerData.posX + 1000), (0 - playerData.posY - 1000), world.width, world.height);
+        bctx.drawImage(img, (0 - playerData.posX - 1000), (0 - playerData.posY - 1000), world.width, world.height);
+        bctx.drawImage(img, (0 - playerData.posX),        (0 - playerData.posY - 1000), world.width, world.height);
+        bctx.drawImage(img, (0 - playerData.posX + 1000), (0 - playerData.posY - 1000), world.width, world.height);
 
-        ctx.drawImage(img, (0 - playerData.posX - 1000), (0 - playerData.posY), world.width, world.height);
-        ctx.drawImage(img, (0 - playerData.posX),        (0 - playerData.posY), world.width, world.height);
-        ctx.drawImage(img, (0 - playerData.posX + 1000), (0 - playerData.posY), world.width, world.height);
+        bctx.drawImage(img, (0 - playerData.posX - 1000), (0 - playerData.posY), world.width, world.height);
+        bctx.drawImage(img, (0 - playerData.posX),        (0 - playerData.posY), world.width, world.height);
+        bctx.drawImage(img, (0 - playerData.posX + 1000), (0 - playerData.posY), world.width, world.height);
 
-        ctx.drawImage(img, (0 - playerData.posX - 1000), (0 - playerData.posY + 1000), world.width, world.height);
-        ctx.drawImage(img, (0 - playerData.posX),        (0 - playerData.posY + 1000), world.width, world.height);
-        ctx.drawImage(img, (0 - playerData.posX + 1000), (0 - playerData.posY + 1000), world.width, world.height);
+        bctx.drawImage(img, (0 - playerData.posX - 1000), (0 - playerData.posY + 1000), world.width, world.height);
+        bctx.drawImage(img, (0 - playerData.posX),        (0 - playerData.posY + 1000), world.width, world.height);
+        bctx.drawImage(img, (0 - playerData.posX + 1000), (0 - playerData.posY + 1000), world.width, world.height);
 
 
         // Draw the client player
         var img = document.getElementById('spaceship');
-        //ctx.fillStyle = playerData.color;
-        ctx.drawImage(img, canvas.width/2, canvas.height/2 - 200, 100, 100);
-        //ctx.fillRect(canvas.width/2, canvas.height/2 - 200, 100, 100);
+        //bctx.fillStyle = playerData.color;
+        bctx.drawImage(img, canvas.width/2, canvas.height/2 - 200, 100, 100);
+        //bctx.fillRect(canvas.width/2, canvas.height/2 - 200, 100, 100);
         
 
 
         /*
-        ctx.fillStyle = 'white';
-        ctx.font = "20pt Arial";
-        ctx.fillText(playerData.posX, (canvas.width/2 + 10), (canvas.height/2 + 10));
-        ctx.fillText(playerData.posY, (canvas.width/2 + 10), (canvas.height/2 + 30));
-        ctx.fillStyle = 'black';
-        ctx.font = "40pt Arial";
-        ctx.fillText(playerData.health, (canvas.width/2 + 40), (canvas.height/2 + 50));
+        bctx.fillStyle = 'white';
+        bctx.font = "20pt Arial";
+        bctx.fillText(playerData.posX, (canvas.width/2 + 10), (canvas.height/2 + 10));
+        bctx.fillText(playerData.posY, (canvas.width/2 + 10), (canvas.height/2 + 30));
+        bctx.fillStyle = 'black';
+        bctx.font = "40pt Arial";
+        bctx.fillText(playerData.health, (canvas.width/2 + 40), (canvas.height/2 + 50));
         */
 
 
@@ -308,34 +314,25 @@
         for (player in players) {
           var p = players[player].data;
           if (p.name != nickname && p.active) {
-            ctx.fillStyle = p.color;
+            bctx.fillStyle = p.color;
             var playX = canvas.width/2 - (playerData.posX - p.posX);
             var playY = canvas.width/2 - (playerData.posY - p.posY);
-            ctx.fillRect(playX, playY, p.width, p.height);
-            ctx.fillStyle = 'black';
-            ctx.font = "40pt Arial";
-            ctx.fillText(p.health, playX + 30, playY + 30);
+            bctx.fillRect(playX, playY, p.width, p.height);
+            bctx.fillStyle = 'black';
+            bctx.font = "40pt Arial";
+            bctx.fillText(p.health, playX + 30, playY + 30);
           }
         }
 
         // Draw the other objects
         for (shot in shots) {
-          ctx.fillStyle = shots[shot].color;
+          bctx.fillStyle = shots[shot].color;
           var shotX = canvas.width/2 - (playerData.posX - shots[shot].posX);
           var shotY = canvas.width/2 - (playerData.posY - shots[shot].posY);
-          //ctx.fillRect(shotX, shotY, shotData.size, shotData.size);
-          ctx.beginPath();
-          ctx.arc(shotX, shotY, shotData.size, 0, 2 * Math.PI);
-          ctx.fill();
+          bctx.beginPath();
+          bctx.arc(shotX, shotY, shotData.size, 0, 2 * Math.PI);
+          bctx.fill();
         }
-/*
-            game.bufferCanvasCtx.fillStyle = updateObject.color;
-            game.bufferCanvasCtx.beginPath();
-            game.bufferCanvasCtx.arc(updateObject.x, updateObject.y, updateObject.radius, 0, 2 * Math.PI);
-            game.bufferCanvasCtx.fill();
-*/
-
-
 
         // Draw the map
         var mapData = {
@@ -347,30 +344,24 @@
         var mapX = canvas.width - mapData.width - 10;
         var mapY = 10;
         // Draw the map
-        ctx.fillStyle = mapData.color;
-        ctx.globalAlpha = 0.5;
-        ctx.fillRect(mapX, mapY, mapData.width + mapData.playerSize, mapData.height + mapData.playerSize); // playerSize acts as padding
+        bctx.fillStyle = mapData.color;
+        bctx.globalAlpha = 0.5;
+        bctx.fillRect(mapX, mapY, mapData.width + mapData.playerSize, mapData.height + mapData.playerSize); // playerSize acts as padding
         // Draw the player
-        ctx.fillStyle = playerData.color;
-        ctx.globalAlpha = 1;
-        ctx.fillRect(mapX + ((playerData.posX/world.width) * mapData.width), mapY + ((playerData.posY/world.height) * mapData.height), 10, 10);
+        bctx.fillStyle = playerData.color;
+        bctx.globalAlpha = 1;
+        bctx.fillRect(mapX + ((playerData.posX/world.width) * mapData.width), mapY + ((playerData.posY/world.height) * mapData.height), 10, 10);
         // Draw the other players
         for (player in players) {
           var p = players[player].data;
             if (p.name != nickname && p.active) {
-            ctx.fillStyle = p.color;
-            ctx.fillRect(mapX + ((p.posX/world.width) * mapData.width), mapY + ((p.posY/world.height) * mapData.height), mapData.playerSize, mapData.playerSize);
+            bctx.fillStyle = p.color;
+            bctx.fillRect(mapX + ((p.posX/world.width) * mapData.width), mapY + ((p.posY/world.height) * mapData.height), mapData.playerSize, mapData.playerSize);
           }
         }
 
-        /*
-        // Other Game Data
-        // Calibration shit
-        ctx.fillStyle = 'white';
-        ctx.font = "40pt Arial";
-        ctx.fillText(localRefX + " : " + tiltX, 10, 40);
-        ctx.fillText(localRefY + " : " + tiltY, 10, 90);
-        */
+        // draw the buffer
+        ctx.drawImage(bufferCanvas, 0, 0, bufferCanvas.width, bufferCanvas.height);
       }
     </script>
   </body>
