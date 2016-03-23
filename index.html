@@ -113,9 +113,7 @@
       });
 
       socket.on('update shots', function(serverShots) {
-        //if (Object.keys(serverShots).length > 0) {
-          shots = serverShots;
-        //}
+        shots = serverShots;
       });
 
       socket.on('update health', function(health) {
@@ -164,8 +162,6 @@
             Functions 
       *********************/
       function fireShot(x, y) {
-        //var dx = x - playerData.posX; 
-        //var dy = y - playerData.posY;
         var dx = x - canvas.width/2;
         var dy = y - canvas.height/2;
         var theta = Math.atan2(dy, dx); // in radians
@@ -265,14 +261,9 @@
       }
 
       function animate() {
-        update();
         draw();
         window.requestAnimFrame(animate);
       };
-
-      function update() {
-        //stuff
-      }
 
       function draw() {
         // clear the screen
@@ -309,8 +300,6 @@
         for (player in players) {
           var p = players[player].data;
           if (p.name != nickname && p.active) {
-         // if (player != nickname) {
-         // var p = players[player].data;
             ctx.fillStyle = p.color;
             var playX = canvas.width/2 - (playerData.posX - p.posX);
             var playY = canvas.width/2 - (playerData.posY - p.posY);
@@ -355,11 +344,14 @@
           }
         }
 
+        /*
         // Other Game Data
+        // Calibration shit
         ctx.fillStyle = 'white';
         ctx.font = "40pt Arial";
         ctx.fillText(localRefX + " : " + tiltX, 10, 40);
         ctx.fillText(localRefY + " : " + tiltY, 10, 90);
+        */
       }
     </script>
   </body>
